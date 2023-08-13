@@ -1,13 +1,14 @@
 ﻿using AudioAppController.Model;
 using AudioAppController.View.Model;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
 namespace AudioAppController.View.Component
 {
-    internal class AudioTrackPanel : Panel
+    public class AudioTrackPanel : Panel
     {
         public AudioProcess AudioProcess { get; set; }   
         public bool IsShowing { get; set; }
@@ -18,6 +19,8 @@ namespace AudioAppController.View.Component
         private Label lblVolume;
         private Button btnMute;
         private Button btnRemove;
+        public event EventHandler OnRemoveFromView;
+        public event EventHandler OnMute;
         public AudioTrackPanel(AudioProcess audioProcess)
         {
             this.AudioProcess = audioProcess;
@@ -28,8 +31,8 @@ namespace AudioAppController.View.Component
         {
             this.BorderStyle = BorderStyle.FixedSingle;
             this.Margin = new Padding(5);
-            this.Width = 200;
-            this.Height = 300;
+            this.Width = CustomProperties.AudioTrackPanelWidth;
+            this.Height = CustomProperties.AudioTrackPanelHeight;
             this.Dock = DockStyle.Top;// center vertically
 
             // TableLayoutPanel organize controls
@@ -53,6 +56,22 @@ namespace AudioAppController.View.Component
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             tableLayoutPanel.Controls.Add(lblTitle, 0, 0);
 
+            // FlowLayoutPanel txtHandler and clear txtHandler
+            FlowLayoutPanel flowLayoutPanelHandler = new FlowLayoutPanel();
+            flowLayoutPanelHandler.FlowDirection = FlowDirection.LeftToRight;
+            flowLayoutPanelHandler.Dock = DockStyle.Fill;
+            flowLayoutPanelHandler.AutoSize = true;
+
+            //Button clear txtHandler
+            Button btnClearHandler = new Button();
+            btnClearHandler.Anchor = AnchorStyles.None;
+            btnClearHandler.Text = "X";
+            btnClearHandler.Width = 20;
+            btnClearHandler.BackColor = Color.LightGray;
+            btnClearHandler.FlatStyle = FlatStyle.Flat;
+            btnClearHandler.FlatAppearance.BorderSize = 0;
+            btnClearHandler.Click += btnClearHandler_Click;
+
             // TextBox key handler
             txtKeyHandler = new TextBox();
             txtKeyHandler.Anchor = AnchorStyles.None;
@@ -60,14 +79,16 @@ namespace AudioAppController.View.Component
             txtKeyHandler.TextAlign = HorizontalAlignment.Center;
             txtKeyHandler.Text = AudioProcess?.KeyCombination?.ToString();
             txtKeyHandler.Padding = new Padding(5);
-            txtKeyHandler.Margin = new Padding(0, 10, 0, 0);
             txtKeyHandler.Click += btnKeySelectionWindow_Click;
             txtKeyHandler.ReadOnly = true;
             txtKeyHandler.Font = new Font(txtKeyHandler.Font.FontFamily, 10);
             txtKeyHandler.BorderStyle = BorderStyle.FixedSingle;
             txtKeyHandler.Text = "click to add key";
+
+            flowLayoutPanelHandler.Controls.Add(btnClearHandler);
+            flowLayoutPanelHandler.Controls.Add(txtKeyHandler);
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutPanel.Controls.Add(txtKeyHandler, 0, 1);
+            tableLayoutPanel.Controls.Add(flowLayoutPanelHandler, 0, 1);
 
             // TrackBar
             trackBar = new TrackBar();
@@ -110,10 +131,11 @@ namespace AudioAppController.View.Component
             btnMute.Anchor = AnchorStyles.None;
             btnMute.BackColor = AudioProcess.IsMuted ? Color.Red : Color.Green;
             btnMute.Height = 30;
-
             btnMute.Font = new Font(btnMute.Font.FontFamily, 12);
             btnMute.ForeColor = Color.White;
             btnMute.Margin = new Padding(18,0,5,0);
+            btnMute.FlatStyle = FlatStyle.Flat;
+            btnMute.FlatAppearance.BorderSize = 0;
 
             //Button remove
             btnRemove = new Button();
@@ -122,30 +144,44 @@ namespace AudioAppController.View.Component
             btnRemove.Height = 30;
             btnRemove.Width = btnMute.Width;
             btnRemove.Font = new Font(btnRemove.Font.FontFamily, 12);
+            btnRemove.FlatStyle = FlatStyle.Flat;
+            btnRemove.FlatAppearance.BorderSize = 0;
+            btnRemove.BackColor = Color.LightGray;
+            btnRemove.Tag = AudioProcess;
 
             flowLayoutPanelOptions.Controls.Add(btnMute);
             flowLayoutPanelOptions.Controls.Add(btnRemove);
         }
 
+
+        private void btnClearHandler_Click(object sender, EventArgs e)
+        {
+            ClearKeyCombination();
+        }
+
         private void btnRemove_Click(object sender, EventArgs e)
         {
-            this.Parent.Controls.Remove(this);
-            this.IsShowing = false;
+            OnRemoveFromView?.Invoke(this, EventArgs.Empty);
         }
 
         public void btnMute_Click(Object sender, EventArgs e)
         {
             AudioProcess.ToggleVolume();
-            UpdateForm();
+            UpdateView();
+            OnMute?.Invoke(this, EventArgs.Empty);
         }
 
         public void OnScroll(Object sender, EventArgs e)
         {
             AudioProcess.SetVolume(trackBar.Value);
-            UpdateForm();
+            UpdateView();
+            if(trackBar.Value == 0)
+            {
+                OnMute?.Invoke(this, EventArgs.Empty);
+            }
         }
 
-        public void UpdateForm()
+        public void UpdateView()
         {
             lblVolume.Text = "Volume: " + AudioProcess.Volume;
             btnMute.BackColor = AudioProcess.IsMuted ? Color.Red : Color.Green;
@@ -155,10 +191,11 @@ namespace AudioAppController.View.Component
 
         private void btnKeySelectionWindow_Click(object sender, EventArgs e)
         {
-            String keyCombination = Mixer.OpenKeySelectionWindow(AudioProcess.KeyCombination);
+            String keyCombination = CreateDialog.OpenKeySelectionWindow(AudioProcess.KeyCombination);
 
             if(keyCombination == null) 
             {
+                ClearKeyCombination();
                 return;
             }
 
@@ -171,6 +208,10 @@ namespace AudioAppController.View.Component
             AudioProcess.Action = action;
         }
 
-
+        private void ClearKeyCombination()
+        {
+            AudioProcess.KeyCombination = null;
+            txtKeyHandler.Text = "click to add key";
+        }
     }
 }

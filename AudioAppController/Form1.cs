@@ -3,9 +3,11 @@ using AudioAppController.Model;
 using AudioAppController.View.Component;
 using AudioAppController.View.Model;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Input;
 using WindowsInput;
@@ -14,47 +16,42 @@ namespace AudioAppController
 {
     public partial class Form1 : Form
     {
-        private Mixer Mixer;
         private bool isReloading = false;
-        
+        private AudioMediaPanel audioMediaPanel;
+        private AudioMediaManager audioMediaManager;
+        private AudioProcessesPanel audioProcessesPanel;
+        private AudioProcessesManager audioProcessesManager;
+        private KeyBoardHook keyBoardHook;
+        private bool isAllAudioTrackPanelsMuted = false;
         public Form1()
         {
             InitializeComponent();
-            Mixer = new Mixer(flowLayoutSoundPanel);
-            this.btnMuteAll.Click += ToggleMuteAll;
-            this.btnAddAll.Click += btnAddAll_Click;
-            this.btnReload.Click += btnReload_Click;
+            LoadComponents();
             FormClosing += Form_Closing;
-            ReloadComboboxList();
         }
+
+        public void LoadComponents()
+        {
+            audioProcessesPanel = new AudioProcessesPanel();
+            audioProcessesPanel.OnAudioTrackPanelMute += OnAudioTrackPanelMute;
+            audioProcessesManager = new AudioProcessesManager();
+            audioMediaManager = new AudioMediaManager();
+            audioMediaPanel = new AudioMediaPanel(audioMediaManager.mediaProcesses);
+            keyBoardHook = new KeyBoardHook();  
+            keyBoardHook.GlobalHook.KeyUp += KeyboardHook_KeyUp;
+            this.Controls.Add(audioProcessesPanel);
+            this.Controls.Add(audioMediaPanel); 
+            ReloadComboboxList();
+            OnAllAudioTrackPanelsMuted();
+        }
+
         private void Form_Closing(object sender, CancelEventArgs e)
         {
-            Mixer.Close();
-        }
-
-        private void btnReload_Click(object sender, EventArgs e)
-        {
-            isReloading = true;
-            Mixer.Reload();
-            ReloadComboboxList();
-            isReloading = false;
-        }
-
-        private void btnAddAll_Click(object sender, EventArgs e)
-        {
-            Mixer.ShowAllLoadedProcesses();
-        }
-
-        private void ToggleMuteAll(object sender, EventArgs e)
-        {
-            bool isAllMuted = Mixer.ToggleMuteAll();
-            btnMuteAll.Text = isAllMuted ? "Unmute All" : "Mute All";
-        }
-
-        private void ReloadComboboxList()
-        {
-            audioProcessBindingSource.DataSource = Mixer.GetAudioProcesses();
-            audioProcessBindingSource.ResetBindings(false);
+            audioProcessesPanel = null;
+            audioMediaPanel = null;
+            audioProcessesManager = null;
+            audioMediaManager = null;
+            keyBoardHook.Close();
         }
 
         private void cbListAudioProcesses_SelectedIndexChanged(object sender, EventArgs e)
@@ -62,93 +59,74 @@ namespace AudioAppController
             if (cbListAudioProcesses.SelectedItem != null && !isReloading)
             {
                 AudioProcess selectedProcess = (AudioProcess)cbListAudioProcesses.SelectedItem;
-                Mixer.AddAudioProcess(selectedProcess,true);
+                audioProcessesManager.Add(selectedProcess);
+                audioProcessesPanel.AddAudioTrackPanel(selectedProcess, true);
             }
         }
 
-        private void txtMediaPlayPause_Click(object sender, EventArgs e)
+        private void ReloadComboboxList()
         {
-            ChangeMediaPlayProcess(sender, VirtualKeyCode.MEDIA_PLAY_PAUSE);
+            audioProcessBindingSource.DataSource = audioProcessesManager.GetAudioProcesses();
+            audioProcessBindingSource.ResetBindings(false);
         }
 
-        private void txtMediaStop_Click(object sender, EventArgs e)
+        private void btnReload_Click(object sender, EventArgs e)
         {
-            ChangeMediaPlayProcess(sender, VirtualKeyCode.MEDIA_STOP);
+            isReloading = true;
+            audioProcessesManager.Reload();
+            ReloadComboboxList();
+            isReloading = false;
         }
 
-        private void txtMediaNextTrack_Click(object sender, EventArgs e)
+        private void btnAddAll_Click(object sender, EventArgs e)
         {
-            ChangeMediaPlayProcess(sender, VirtualKeyCode.MEDIA_NEXT_TRACK);
+            List<AudioProcess> audioProcesses = this.audioProcessesManager.GetAudioProcesses();
+            audioProcessesPanel.AddAudioTrackPanel(audioProcesses, true);
+        }   
+
+        private void OnAudioTrackPanelMute(object sender, EventArgs e)
+        {
+            OnAllAudioTrackPanelsMuted();
         }
 
-        private void txtMediaPreviousTrack_Click(object sender, EventArgs e)
+        private void OnAllAudioTrackPanelsMuted()
         {
-            ChangeMediaPlayProcess(sender, VirtualKeyCode.MEDIA_PREV_TRACK);
+            this.isAllAudioTrackPanelsMuted = audioProcessesManager.IsAllMuted();
+            btnMuteAll.Text = this.isAllAudioTrackPanelsMuted ? "Unmute All" : "Mute All";
         }
 
-        private void txtMuteAudio_Click(object sender, EventArgs e)
+        private void OnAudioTrackPanelRemove(object sender, EventArgs e)
         {
-            ChangeMediaPlayProcess(sender, VirtualKeyCode.VOLUME_MUTE);
+            AudioTrackPanel audioTrackPanel = (AudioTrackPanel)sender;
+            this.audioProcessesManager.RemoveAudioProcess(audioTrackPanel.AudioProcess);
         }
 
-        private void btnMediaPlayPause_Click(object sender, EventArgs e)
+        private void btnMuteAll_Click(object sender, EventArgs e)
         {
-            Mixer.SimulateKey(VirtualKeyCode.MEDIA_PLAY_PAUSE);
-            ChangeButtonColor(sender);
-        }
-        private void btnMediaStop_Click(object sender, EventArgs e)
-        {
-            Mixer.SimulateKey(VirtualKeyCode.MEDIA_STOP);
-            ChangeButtonColor(sender);
-        }
-
-        private void btnMediaNextTrack_Click(object sender, EventArgs e)
-        {
-            Mixer.SimulateKey(VirtualKeyCode.MEDIA_NEXT_TRACK);
-            ChangeButtonColor(sender);
-        }
-
-        private void btnPreviousTrack_Click(object sender, EventArgs e)
-        {
-            Mixer.SimulateKey(VirtualKeyCode.MEDIA_PREV_TRACK);
-            ChangeButtonColor(sender);
-        }
-
-        private void btnMuteAudio_Click(object sender, EventArgs e)
-        {
-            Mixer.SimulateKey(VirtualKeyCode.VOLUME_MUTE);
-            ChangeButtonColor(sender);
-        }
-
-        private void ChangeButtonColor(object sender)
-        {
-            Button button = sender as Button;
-            button.BackColor = button.BackColor.Equals(Color.Green) ? Color.Red : Color.Green;
-        }
-
-        private void ChangeMediaPlayProcess(object sender, VirtualKeyCode virtualKeyCode)
-        {
-            TextBox textBox = (TextBox)sender;
-
-            String keyCombination = textBox.Text;
-            String newKeyCombination = Mixer.OpenKeySelectionWindow(keyCombination);
-            bool hasKeyCombination = keyCombination != null && keyCombination.Length > 0;
-            bool hasNewKeyCombination = newKeyCombination != null && newKeyCombination.Length > 0;
-
-            if (!hasNewKeyCombination) return;
-
-            if (hasKeyCombination && !newKeyCombination.Equals(keyCombination))
+            if (!audioProcessesPanel.HasAudioTrackPanels())
             {
-                Mixer.ChangeKeyMediaPlayProcess(keyCombination, newKeyCombination);
+                return;
             }
-
-            if (!hasKeyCombination && hasNewKeyCombination)
-            {
-                Mixer.AddMediaPlayProcess(newKeyCombination, virtualKeyCode);
-            }
-
-            textBox.Text = newKeyCombination;
+            bool newMuteValue = !this.isAllAudioTrackPanelsMuted;
+            audioProcessesPanel.ToggleMute(newMuteValue);
+            this.isAllAudioTrackPanelsMuted = newMuteValue;
+            OnAllAudioTrackPanelsMuted();
         }
 
+        private void KeyboardHook_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            String[] keys = e.KeyData.ToString().Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+            String key = keys[0];
+            String modifiers = string.Join("+", keys.Skip(1));
+
+            if (keys.Length == 0) return;
+
+            String combination = modifiers + "+" + key;
+
+            audioProcessesManager.ExecuteCombination(combination);
+            audioMediaManager.ExecuteCombination(combination);
+            audioProcessesPanel.UpdateViewPanelList(audioProcessesPanel.GetByCombination(combination));
+            this.OnAllAudioTrackPanelsMuted();
+        }
     }
 }

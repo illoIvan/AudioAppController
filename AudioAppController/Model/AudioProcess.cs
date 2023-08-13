@@ -2,7 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
+using System.Runtime.CompilerServices;
+using WindowsInput;
 
 namespace AudioAppController.Model
 {
@@ -20,6 +21,7 @@ namespace AudioAppController.Model
         public float OriginalVolume { get; set; }
         public Action Action { get; set; }
         public String KeyCombination { get; set; }
+        public VirtualKeyCode virtualKeyCode { get; set; }
 
         public AudioProcess() { }
 
@@ -65,6 +67,7 @@ namespace AudioAppController.Model
                 audioProcess.ProcessName = process.ProcessName;
                 audioProcess.WindowTitle = process.MainWindowTitle;
             }
+            audioProcess.virtualKeyCode = VirtualKeyCode.None;
             return audioProcess;
         }
 

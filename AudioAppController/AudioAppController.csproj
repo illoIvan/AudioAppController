@@ -61,8 +61,20 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\AudioMediaManager.cs" />
     <Compile Include="Model\AudioProcess.cs" />
+    <Compile Include="Model\AudioProcessesManager.cs" />
+    <Compile Include="Model\CreateDialog.cs" />
+    <Compile Include="Model\KeyBoardHook.cs" />
+    <Compile Include="Model\KeyBoardSimulator.cs" />
+    <Compile Include="View\Component\AudioProcessesPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Model\AudioUtilities.cs" />
+    <Compile Include="Model\CustomProperties.cs" />
+    <Compile Include="View\Component\AudioMediaPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="View\Component\AudioTrackPanel.cs">
       <SubType>Component</SubType>
     </Compile>
