@@ -79,7 +79,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Model\CustomKeys.cs" />
-    <Compile Include="Mixer.cs" />
     <Compile Include="Model\VolumeMixer.cs" />
     <Compile Include="View\KeySelectionWindow.cs">
       <SubType>Form</SubType>

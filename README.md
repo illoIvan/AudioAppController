@@ -23,7 +23,7 @@ Check [here](https://github.com/illoIvan/AudioAppController/releases) latest rel
 
 ## Application interface
 
-![Image of the application interface](https://github.com/illoIvan/AudioAppController/assets/40025251/d39a6624-55d2-4be3-8417-e38ac385a4d6)
+![Image of the application interface](https://github.com/illoIvan/AudioAppController/assets/40025251/b5fa7eb4-1e89-4247-a5e3-e511027c0fe2)
 
 ## Dependencies:
 
