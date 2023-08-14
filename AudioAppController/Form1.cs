@@ -1,16 +1,11 @@
 ﻿
 using AudioAppController.Model;
 using AudioAppController.View.Component;
-using AudioAppController.View.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Windows.Input;
-using WindowsInput;
 
 namespace AudioAppController
 {
@@ -112,20 +107,21 @@ namespace AudioAppController
             this.isAllAudioTrackPanelsMuted = newMuteValue;
             OnAllAudioTrackPanelsMuted();
         }
-
+        
         private void KeyboardHook_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             String[] keys = e.KeyData.ToString().Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
             String key = keys[0];
             String modifiers = string.Join("+", keys.Skip(1));
 
+            //Debug.WriteLine("keys: "+string.Join(", ", keys));  
             if (keys.Length == 0) return;
 
-            String combination = modifiers + "+" + key;
+            String realCombination = modifiers + "+" + key;
 
-            audioProcessesManager.ExecuteCombination(combination);
-            audioMediaManager.ExecuteCombination(combination);
-            audioProcessesPanel.UpdateViewPanelList(audioProcessesPanel.GetByCombination(combination));
+            audioProcessesManager.ExecuteRealCombination(realCombination);
+            audioMediaManager.ExecuteRealCombination(realCombination);
+            audioProcessesPanel.UpdateViewPanelList(audioProcessesPanel.GetByRealKey(realCombination));
             this.OnAllAudioTrackPanelsMuted();
         }
     }

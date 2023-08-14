@@ -1,9 +1,6 @@
-﻿using AudioAppController.View.Component;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AudioAppController.Model
 {
@@ -113,7 +110,7 @@ namespace AudioAppController.Model
         {
             if (audioProcess == null || !IsOnList(audioProcess)) return;
 
-            audioProcess.KeyCombination = null;
+            audioProcess.CustomKey = null;
             this.audioProcesses.Remove(audioProcess);
         }
 
@@ -125,10 +122,11 @@ namespace AudioAppController.Model
             return apAdded != null;
         }
 
-        public void ExecuteCombination(String combination)
+        public void ExecuteRealCombination(String combination)
         {
             List<AudioProcess> processes = audioProcesses
-                    .FindAll(ap => ap.KeyCombination != null && ap.KeyCombination.Equals(combination));
+                    .FindAll(ap => ap.CustomKey != null 
+                    && ap.CustomKey.RealName.Equals(combination));
             if (processes.Count > 0)
             {
                 foreach (AudioProcess ap in processes)

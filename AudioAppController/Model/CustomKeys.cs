@@ -1,176 +1,214 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AudioAppController.Model
 {
-    public enum CustomKeys
+    public static class CustomKeys
     {
-        // Tecla FLECHA IZQUIERDA.
-        Left = 0x25,
-        // Tecla FLECHA ARRIBA.
-        Up = 0x26,
-        // Tecla FLECHA DERECHA.
-        Right = 0x27,
-        // Tecla FLECHA ABAJO.
-        Down = 0x28,
-        // Tecla RETROCESO.
-        Back = 0x8,
-        // Tecla DEL.
-        Delete = 0x2E,
-        // Tecla FIN.
-        End = 0x23,
-        // Tecla ENTRAR.
-        Enter = 0xD,
-        // Tecla ESC.
-        Escape = 0x1B,
-        // Tecla INICIO.
-        Home = 0x24,
-        // Tecla BARRA ESPACIADORA.
-        Space = 0x20,
-        // Tecla RE PÁG.
-        Prior = 0x21,
-        // Tecla RE PÁG.
-        PageUp = 0x21,
-        // Tecla AV PÁG.
-        Next = 0x22,
-        // Tecla AV PÁG.
-        PageDown = 0x22,
-        // Tecla IMPRIMIR.
-        Print = 0x2A,
-        // Tecla IMPRIMIR PANTALLA.
-        PrintScreen = 0x2C,
-        // Tecla INS.
-        Insert = 0x2D,
-        // Tecla 0.
-        D0 = 0x30,
-        // Tecla 1.
-        D1 = 0x31,
-        // Tecla 2.
-        D2 = 0x32,
-        // Tecla 3.
-        D3 = 0x33,
-        // Tecla 4.
-        D4 = 0x34,
-        // Tecla 5.
-        D5 = 0x35,
-        // Tecla 6.
-        D6 = 0x36,
-        // Tecla 7.
-        D7 = 0x37,
-        // Tecla 8.
-        D8 = 0x38,
-        // Tecla 9.
-        D9 = 0x39,
-        // Tecla A.
-        A = 0x41,
-        // Tecla B.
-        B = 0x42,
-        // Tecla C.
-        C = 0x43,
-        // Tecla D.
-        D = 0x44,
-        // Tecla E.
-        E = 0x45,
-        // Tecla F.
-        F = 0x46,
-        // Tecla G.
-        G = 0x47,
-        // Tecla H.
-        H = 0x48,
-        // Tecla I.
-        I = 0x49,
-        // Tecla J.
-        J = 0x4A,
-        // Tecla K.
-        K = 0x4B,
-        // Tecla L.
-        L = 0x4C,
-        // Tecla M.
-        M = 0x4D,
-        // Tecla N.
-        N = 0x4E,
-        // Tecla O.
-        O = 0x4F,
-        // Tecla P.
-        P = 0x50,
-        // Tecla Q.
-        Q = 0x51,
-        // Tecla R.
-        R = 0x52,
-        // Tecla S.
-        S = 0x53,
-        // Tecla T.
-        T = 0x54,
-        // Tecla U.
-        U = 0x55,
-        // Tecla V.
-        V = 0x56,
-        // Tecla W.
-        W = 0x57,
-        // Tecla X.
-        X = 0x58,
-        // Tecla Y.
-        Y = 0x59,
-        // Tecla Z.
-        Z = 0x5A,
-        // Tecla 0 del teclado numérico.
-        NumPad0 = 0x60,
-        // Tecla 1 del teclado numérico.
-        NumPad1 = 0x61,
-        // Tecla 2 del teclado numérico.
-        NumPad2 = 0x62,
-        // Tecla 3 del teclado numérico.
-        NumPad3 = 0x63,
-        // Tecla 4 del teclado numérico.
-        NumPad4 = 0x64,
-        // Tecla 5 del teclado numérico.
-        NumPad5 = 0x65,
-        // Tecla 6 del teclado numérico.
-        NumPad6 = 0x66,
-        // Tecla 7 del teclado numérico.
-        NumPad7 = 0x67,
-        // Tecla 8 del teclado numérico.
-        NumPad8 = 0x68,
-        // Tecla 9 del teclado numérico.
-        NumPad9 = 0x69,
-        // Tecla multiplicación.
-        Multiply = 0x6A,
-        // Tecla agregar.
-        Add = 0x6B,
-        // Tecla separador.
-        Separator = 0x6C,
-        // Tecla resta.
-        Subtract = 0x6D,
-        // Tecla decimal.
-        Decimal = 0x6E,
-        // Tecla división.
-        Divide = 0x6F,
-        // Tecla F1.
-        F1 = 0x70,
-        // Tecla F2.
-        F2 = 0x71,
-        // Tecla F3.
-        F3 = 0x72,
-        // Tecla F4.
-        F4 = 0x73,
-        // Tecla F5.
-        F5 = 0x74,
-        // Tecla F6.
-        F6 = 0x75,
-        // Tecla F7.
-        F7 = 0x76,
-        // Tecla F8.
-        F8 = 0x77,
-        // Tecla F9.
-        F9 = 0x78,
-        // Tecla F10.
-        F10 = 0x79,
-        // Tecla F11.
-        F11 = 0x7A,
-        // Tecla F12.
-        F12 = 0x7B
+        public static String KEY_SEPARATOR = "+";
+
+        public static CustomKey Left { get; } = new CustomKey("Left", "Left Arrow");
+        public static CustomKey Up { get; } = new CustomKey("Up", "Up Arrow");
+        public static CustomKey Right { get; } = new CustomKey("Right", "Right Arrow");
+        public static CustomKey Down { get; } = new CustomKey("Down", "Down Arrow");
+        public static CustomKey Back { get; } = new CustomKey("Back", "Backspace");
+        public static CustomKey Enter { get; } = new CustomKey("Enter", "Enter");
+        public static CustomKey Escape { get; } = new CustomKey("Escape", "Escape");
+        public static CustomKey Space { get; } = new CustomKey("Space", "Spacebar");
+        public static CustomKey Insert { get; } = new CustomKey("Insert", "Insert");
+        public static CustomKey Home { get; } = new CustomKey("Home", "Home");
+        public static CustomKey PageUp { get; } = new CustomKey("PageUp", "Page UP");
+        public static CustomKey Delete { get; } = new CustomKey("Delete", "Delete");
+        public static CustomKey End { get; } = new CustomKey("End", "End");
+        public static CustomKey PageDown { get; } = new CustomKey("PageDown", "Page Down");
+        public static CustomKey PrintScreen { get; } = new CustomKey("PrintScreen", "PrintScreen");
+        public static CustomKey D0 { get; } = new CustomKey("D0", "0");
+        public static CustomKey D1 { get; } = new CustomKey("D1", "1");
+        public static CustomKey D2 { get; } = new CustomKey("D2", "2");
+        public static CustomKey D3 { get; } = new CustomKey("D3", "3");
+        public static CustomKey D4 { get; } = new CustomKey("D4", "4");
+        public static CustomKey D5 { get; } = new CustomKey("D5", "5");
+        public static CustomKey D6 { get; } = new CustomKey("D6", "6");
+        public static CustomKey D7 { get; } = new CustomKey("D7", "7");
+        public static CustomKey D8 { get; } = new CustomKey("D8", "8");
+        public static CustomKey D9 { get; } = new CustomKey("D9", "9");
+        public static CustomKey A { get; } = new CustomKey("A", "A");
+        public static CustomKey B { get; } = new CustomKey("B", "B");
+        public static CustomKey C { get; } = new CustomKey("C", "C");
+        public static CustomKey D { get; } = new CustomKey("D", "D");
+        public static CustomKey E { get; } = new CustomKey("E", "E");
+        public static CustomKey F { get; } = new CustomKey("F", "F");
+        public static CustomKey G { get; } = new CustomKey("G", "G");
+        public static CustomKey H { get; } = new CustomKey("H", "H");
+        public static CustomKey I { get; } = new CustomKey("I", "I");
+        public static CustomKey J { get; } = new CustomKey("J", "J");
+        public static CustomKey K { get; } = new CustomKey("K", "K");
+        public static CustomKey L { get; } = new CustomKey("L", "L");
+        public static CustomKey M { get; } = new CustomKey("M", "M");
+        public static CustomKey N { get; } = new CustomKey("N", "N");
+        public static CustomKey O { get; } = new CustomKey("O", "O");
+        public static CustomKey P { get; } = new CustomKey("P", "P");
+        public static CustomKey Q { get; } = new CustomKey("Q", "Q");
+        public static CustomKey R { get; } = new CustomKey("R", "R");
+        public static CustomKey S { get; } = new CustomKey("S", "S");
+        public static CustomKey T { get; } = new CustomKey("T", "T");
+        public static CustomKey U { get; } = new CustomKey("U", "U");
+        public static CustomKey V { get; } = new CustomKey("V", "V");
+        public static CustomKey W { get; } = new CustomKey("W", "W");
+        public static CustomKey X { get; } = new CustomKey("X", "X");
+        public static CustomKey Y { get; } = new CustomKey("Y", "Y");
+        public static CustomKey Z { get; } = new CustomKey("Z", "Z");
+        public static CustomKey Oemplus { get; } = new CustomKey("Oemplus", "Plus");
+        public static CustomKey Oemcomma { get; } = new CustomKey("Oemcomma", "Comma(,)");
+        public static CustomKey OemMinus { get; } = new CustomKey("OemMinus", "Minux(-)");
+        public static CustomKey OemPeriod { get; } = new CustomKey("OemPeriod", "Period(.)");
+        public static CustomKey NumPad0 { get; } = new CustomKey("NumPad0", "NumPad0");
+        public static CustomKey NumPad1 { get; } = new CustomKey("NumPad1", "NumPad1");
+        public static CustomKey NumPad2 { get; } = new CustomKey("NumPad2", "NumPad2");
+        public static CustomKey NumPad3 { get; } = new CustomKey("NumPad3", "NumPad3");
+        public static CustomKey NumPad4 { get; } = new CustomKey("NumPad4", "NumPad4");
+        public static CustomKey NumPad5 { get; } = new CustomKey("NumPad5", "NumPad5");
+        public static CustomKey NumPad6 { get; } = new CustomKey("NumPad6", "NumPad6");
+        public static CustomKey NumPad7 { get; } = new CustomKey("NumPad7", "NumPad7");
+        public static CustomKey NumPad8 { get; } = new CustomKey("NumPad8", "NumPad8");
+        public static CustomKey NumPad9 { get; } = new CustomKey("NumPad9", "NumPad9");
+        public static CustomKey Divide { get; } = new CustomKey("Divide", "Divide(/)");
+        public static CustomKey Multiply { get; } = new CustomKey("Multiply", "Multiply(*)");
+        public static CustomKey Subtract { get; } = new CustomKey("Subtract", "Subtract(-)");
+        public static CustomKey F1 { get; } = new CustomKey("F1", "F1");
+        public static CustomKey F2 { get; } = new CustomKey("F2", "F2");
+        public static CustomKey F3 { get; } = new CustomKey("F3", "F3");
+        public static CustomKey F4 { get; } = new CustomKey("F4", "F4");
+        public static CustomKey F5 { get; } = new CustomKey("F5", "F5");
+        public static CustomKey F6 { get; } = new CustomKey("F6", "F6");
+        public static CustomKey F7 { get; } = new CustomKey("F7", "F7");
+        public static CustomKey F8 { get; } = new CustomKey("F8", "F8");
+        public static CustomKey F9 { get; } = new CustomKey("F9", "F9");
+        public static CustomKey F10 { get; } = new CustomKey("F10", "F10");
+        public static CustomKey F11 { get; } = new CustomKey("F11", "F11");
+        public static CustomKey F12 { get; } = new CustomKey("F12", "F12");
+        public static CustomKey F13 { get; } = new CustomKey("F13", "F13");
+        public static CustomKey F14 { get; } = new CustomKey("F14", "F14");
+        public static CustomKey F15 { get; } = new CustomKey("F15", "F15");
+        public static CustomKey F16 { get; } = new CustomKey("F16", "F16");
+        public static CustomKey F17 { get; } = new CustomKey("F17", "F17");
+        public static CustomKey F18 { get; } = new CustomKey("F18", "F18");
+        public static CustomKey F19 { get; } = new CustomKey("F19", "F19");
+        public static CustomKey F20 { get; } = new CustomKey("F20", "F20");
+        public static CustomKey F21 { get; } = new CustomKey("F21", "F21");
+        public static CustomKey F22 { get; } = new CustomKey("F22", "F22");
+        public static CustomKey F23 { get; } = new CustomKey("F23", "F23");
+        public static CustomKey F24 { get; } = new CustomKey("F24", "F24");
+
+        public static CustomKey Alt { get; } = new CustomKey("Alt", "Alt");
+        public static CustomKey Control { get; } = new CustomKey("Control", "Control");
+        public static CustomKey Shift { get; } = new CustomKey("Shift", "Shift");
+        public static List<CustomKey> GetAllKeys()
+        {
+            return new List<CustomKey>
+            {
+                Escape,PrintScreen,
+
+                Insert, Home,PageUp,
+                Delete, End,PageDown,
+
+                Left, Up, Right, Down,
+
+                D0, D1, D2, D3, D4, D5, D6, D7, D8, D9,
+
+                A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
+                Back,Enter,Space,
+
+                Oemplus, Oemcomma, OemMinus, OemPeriod,
+            
+                Multiply, Subtract,Divide,
+
+                NumPad0, NumPad1, NumPad2, NumPad3, NumPad4,
+                NumPad5, NumPad6, NumPad7, NumPad8, NumPad9, 
+
+                F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12,
+                F13, F14, F15, F16, F17, F18, F19, F20, F21, F22, F23, F24
+            };
+        }
+        public static List<CustomKey> GetAllModifiers()
+        {
+            return new List<CustomKey> { Shift, Control, Alt };
+        }
+
+        public static List<String> GetDisplayNameKeys()
+        {
+            return GetAllKeys().Select(key => key.DisplayName).ToList();
+        }
+        public static List<String> GetRealNameKeys()
+        {
+            return GetAllKeys().Select(key => key.RealName).ToList();
+        }
+        public static CustomKey GetCustomKeyByRealName(String key)
+        {
+            if (key == null || key.Length == 0) return null;
+
+            if (IsModifier(key))
+            {
+                return GetAllModifiers().FirstOrDefault(k => k.RealName.Equals(key));
+            }
+            else
+            {
+                return GetAllKeys().FirstOrDefault(k => k.RealName.Equals(key));
+            }
+        }
+        public static bool IsModifier(string input)
+        {
+            List<CustomKey> keys = GetAllModifiers();
+
+            return keys.Exists(k => k.RealName.Equals(input));
+        }
+        public static CustomKey ConvertToCustomKey(string keyInput)
+        {
+            if (string.IsNullOrEmpty(keyInput))
+            {
+                return null;
+            }
+
+            string[] keyStrings = keyInput.Split('+');
+            List<CustomKey> modifiers = new List<CustomKey>();
+            List<CustomKey> keys = new List<CustomKey>();
+
+            foreach (string keyString in keyStrings)
+            {
+                string trimmedKey = keyString.Trim();
+                CustomKey customKey = GetCustomKeyByRealName(trimmedKey);
+
+                if (IsModifier(trimmedKey))
+                {
+                    modifiers.Add(customKey);
+                }
+                else
+                {
+                    keys.Add(customKey);
+                }
+            }
+
+            if (keys.Count == 0 || modifiers.Count == 0)
+            {
+                return null;
+            }
+
+            string strModifiersRealName = string.Join(KEY_SEPARATOR, modifiers.Select(k => k.RealName));
+            string strModifiersDisplayName = string.Join(KEY_SEPARATOR, modifiers.Select(k => k.DisplayName));
+
+            string strKeysRealName = string.Join(KEY_SEPARATOR, keys.Select(k => k.RealName));
+            string strKeysDisplayName = string.Join(KEY_SEPARATOR, keys.Select(k => k.DisplayName));
+
+            string strRealName = modifiers.Count > 0
+                ? $"{strModifiersRealName}{KEY_SEPARATOR}{strKeysRealName}"
+                : strKeysRealName;
+
+            string strDisplayName = modifiers.Count > 0
+                ? $"{strModifiersDisplayName}{KEY_SEPARATOR}{strKeysDisplayName}"
+                : strKeysDisplayName;
+
+            return new CustomKey(strRealName, strDisplayName);
+        }
     }
 }

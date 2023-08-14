@@ -1,10 +1,5 @@
-﻿using AudioAppController.View.Component;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WindowsInput;
 
 namespace AudioAppController.Model
@@ -29,58 +24,25 @@ namespace AudioAppController.Model
             AddMediaPlayProcess(null, VirtualKeyCode.VOLUME_MUTE);
         }
 
-        public void AddMediaPlayProcess(String keyCombination, VirtualKeyCode virtualKeyCode)
+        public void AddMediaPlayProcess(CustomKey customKey, VirtualKeyCode virtualKeyCode)
         {
             Action action = () =>
             {
                 keyboardSimulator.SimulateKey(virtualKeyCode);
             };
             AudioProcess audioProcess = new AudioProcess();
-            audioProcess.KeyCombination = keyCombination;
+            audioProcess.CustomKey = customKey;
             audioProcess.Action = action;
             audioProcess.virtualKeyCode = virtualKeyCode;
             mediaProcesses.Add(audioProcess);
         }
 
-        public void ChangeKeyMediaPlayProcess(String oldKeyCombination, String newKeyCombination)
-        {
-            List<AudioProcess> audioProcess = mediaProcesses.FindAll(ap => ap.KeyCombination != null && ap.KeyCombination.Equals(oldKeyCombination));
 
-            if (audioProcess.Count > 0)
-            {
-                foreach (AudioProcess ap in audioProcess)
-                {
-                    ap.KeyCombination = newKeyCombination;
-                }
-            }
-        }
-
-        public void ChangeKeyComnbination(String oldKeyCombination, String newKeyCombination, VirtualKeyCode keyCode)
-        {
-            bool hasKeyCombination = oldKeyCombination != null && oldKeyCombination.Length > 0;
-            bool hasNewKeyCombination = newKeyCombination != null && newKeyCombination.Length > 0;
-
-            if (!hasNewKeyCombination)
-            {
-                return;
-            };
-
-            if (hasKeyCombination && !newKeyCombination.Equals(oldKeyCombination))
-            {
-                ChangeKeyMediaPlayProcess(oldKeyCombination, newKeyCombination);
-            }
-
-            if (!hasKeyCombination && hasNewKeyCombination)
-            {
-                AddMediaPlayProcess(newKeyCombination, keyCode);
-            }
-        }
-
-        public void ExecuteCombination(String combination)
+        public void ExecuteRealCombination(String combination)
         {
             List<AudioProcess> processes = mediaProcesses
-                    .FindAll(ap => ap.KeyCombination != null 
-                    && ap.KeyCombination.Equals(combination));
+                    .FindAll(ap => ap.CustomKey != null 
+                    && ap.CustomKey.RealName.Equals(combination));
             if (processes.Count > 0)
             {
                 foreach (AudioProcess ap in processes)

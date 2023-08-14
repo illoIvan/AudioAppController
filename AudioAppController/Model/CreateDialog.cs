@@ -1,9 +1,5 @@
 ﻿using AudioAppController.View.Model;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AudioAppController.Model
@@ -11,24 +7,24 @@ namespace AudioAppController.Model
     public class CreateDialog
     {
 
-        public static String OpenKeySelectionWindow(String keyCombination)
+        public static CustomKey OpenKeySelectionWindow(CustomKey customKey)
         {
-            KeySelectionWindow keySelectionWindow = new KeySelectionWindow(keyCombination);
+            KeySelectionWindow keySelectionWindow = new KeySelectionWindow(customKey);
             DialogResult result = keySelectionWindow.ShowDialog();
 
-            if (!(result == DialogResult.OK))
+            if (result != DialogResult.OK)
             {
                 return null;
             }
 
             String modifiers = keySelectionWindow.Modifiers;
             String key = keySelectionWindow.Key;
-            if (modifiers == null || modifiers.Length == 0)
-            {
-                return null;
-            }
 
-            return modifiers + key;
+            if (string.IsNullOrEmpty(modifiers)) return null;
+
+            CustomKey keyDialog = CustomKeys.ConvertToCustomKey(modifiers + key);
+
+            return keyDialog;
         }
     }
 }

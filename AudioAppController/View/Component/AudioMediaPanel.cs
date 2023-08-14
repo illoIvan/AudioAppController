@@ -1,5 +1,4 @@
 ﻿using AudioAppController.Model;
-using Gma.System.MouseKeyHook;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -40,15 +39,25 @@ namespace AudioAppController.View.Component
         {
             Control control = sender as Control;
 
-            VirtualKeyCode virtualKey = (VirtualKeyCode)control.Tag;
-            String keyCombination = control.Text;
-            String newKeyCombination = CreateDialog.OpenKeySelectionWindow(keyCombination);
+            AudioProcess audioProcess = control.Tag as AudioProcess;
+            CustomKey keyCombination = audioProcess.CustomKey;
+            CustomKey newCustomKey = CreateDialog.OpenKeySelectionWindow(keyCombination);
 
-            if (newKeyCombination == null) return;
+            if (keyCombination == null && keyCombination != null
+                    && keyCombination.RealName.Length > 0)
+            {
+                return;
+            }
 
-            AudioProcess process = GetProcessByVirtualKey(virtualKey);
-            process.KeyCombination = newKeyCombination;
-            control.Text = newKeyCombination;
+            if (newCustomKey == null) return;
+
+            if(audioProcess.CustomKey == null)
+            {
+                audioProcess.CustomKey = new CustomKey("", "");
+            }
+
+            audioProcess.CustomKey.ChangeKey(newCustomKey);
+            control.Text = newCustomKey.DisplayName;
         }
 
 
@@ -72,7 +81,7 @@ namespace AudioAppController.View.Component
             AudioProcess process = control.Tag as AudioProcess;
             if (process != null && process.virtualKeyCode != VirtualKeyCode.None)
             {
-                process.KeyCombination = null;
+                process.CustomKey = null;
             }
         }
         private AudioProcess GetProcessByVirtualKey(VirtualKeyCode virtualKey)
@@ -94,8 +103,10 @@ namespace AudioAppController.View.Component
             btnKey.UseVisualStyleBackColor = false;
             btnKey.Click += new EventHandler(this.OnClickSimulateKey);
 
+            AudioProcess audioProcess = GetProcessByVirtualKey(keyCode);
+
             TextBox txtKey = new TextBox();
-            txtKey.Tag = keyCode;
+            txtKey.Tag = audioProcess;
             txtKey.BorderStyle = BorderStyle.FixedSingle;
             txtKey.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular);
             txtKey.Size = new Size(160, 27);
@@ -103,7 +114,7 @@ namespace AudioAppController.View.Component
             txtKey.Anchor = AnchorStyles.None;
 
             Button btnRemoveKey = new Button();
-            btnRemoveKey.Tag = GetProcessByVirtualKey(keyCode);
+            btnRemoveKey.Tag = audioProcess;
             btnRemoveKey.BackColor = Color.LightGray;
             btnRemoveKey.FlatStyle = FlatStyle.Flat;
             btnRemoveKey.Font = new Font("Microsoft Sans Serif", 8F, FontStyle.Bold);

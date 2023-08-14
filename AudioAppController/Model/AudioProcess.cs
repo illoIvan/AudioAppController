@@ -2,14 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using WindowsInput;
 
 namespace AudioAppController.Model
 {
     public class AudioProcess
     {
-
         public Process Process { get; private set; }
         public string ProcessName { get; private set; }
         public int ProcessId { get; private set; }
@@ -20,7 +18,7 @@ namespace AudioAppController.Model
         public bool IsMuted { get { return Volume == 0; }}
         public float OriginalVolume { get; set; }
         public Action Action { get; set; }
-        public String KeyCombination { get; set; }
+        public CustomKey CustomKey { get; set; }
         public VirtualKeyCode virtualKeyCode { get; set; }
 
         public AudioProcess() { }
@@ -34,22 +32,6 @@ namespace AudioAppController.Model
             this.Description = description;
             this.Volume = volume;
             this.IconPath = iconPath;
-        }
-
-        public static List<AudioProcess> LoadAllAudioProcess()
-        {
-            List<AudioProcess> audioProcessList = new List<AudioProcess>();
-
-            audioProcessList.Clear();
-            IList<AudioSession> audioSessionList = AudioUtilities.GetAllSessions();
-            foreach (AudioSession item in audioSessionList)
-            {
-                if (item.Process != null)
-                {
-                    audioProcessList.Add(AudioProcess.ToAudioProcess(item));
-                }
-            }
-            return audioProcessList;
         }
 
         public static AudioProcess ToAudioProcess(AudioSession audioSession)

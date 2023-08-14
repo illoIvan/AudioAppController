@@ -1,8 +1,5 @@
 ﻿using AudioAppController.Model;
-using AudioAppController.View.Model;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -77,7 +74,7 @@ namespace AudioAppController.View.Component
             txtKeyHandler.Anchor = AnchorStyles.None;
             txtKeyHandler.Width = this.Width - 40;
             txtKeyHandler.TextAlign = HorizontalAlignment.Center;
-            txtKeyHandler.Text = AudioProcess?.KeyCombination?.ToString();
+            txtKeyHandler.Text = AudioProcess?.CustomKey?.DisplayName.ToString();
             txtKeyHandler.Padding = new Padding(5);
             txtKeyHandler.Click += btnKeySelectionWindow_Click;
             txtKeyHandler.ReadOnly = true;
@@ -191,16 +188,21 @@ namespace AudioAppController.View.Component
 
         private void btnKeySelectionWindow_Click(object sender, EventArgs e)
         {
-            String keyCombination = CreateDialog.OpenKeySelectionWindow(AudioProcess.KeyCombination);
+            CustomKey newCustomKey = CreateDialog.OpenKeySelectionWindow(AudioProcess.CustomKey);
 
-            if(keyCombination == null) 
+            if(newCustomKey == null && this.AudioProcess.CustomKey != null)
+            {
+                return;
+            }
+
+            if(newCustomKey == null) 
             {
                 ClearKeyCombination();
                 return;
             }
 
-            AudioProcess.KeyCombination = keyCombination;
-            txtKeyHandler.Text = keyCombination;
+            AudioProcess.CustomKey = newCustomKey;
+            txtKeyHandler.Text = newCustomKey.DisplayName;
             Action action = () =>
             {
                 this.AudioProcess.ToggleVolume();
@@ -210,7 +212,7 @@ namespace AudioAppController.View.Component
 
         private void ClearKeyCombination()
         {
-            AudioProcess.KeyCombination = null;
+            AudioProcess.CustomKey = null;
             txtKeyHandler.Text = "click to add key";
         }
     }

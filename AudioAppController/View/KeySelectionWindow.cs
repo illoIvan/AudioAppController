@@ -1,31 +1,31 @@
 ﻿using AudioAppController.Model;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace AudioAppController.View.Model
 {
     internal class KeySelectionWindow : Form
     {
-
         public String Modifiers;
         public String Key { get; set; }
         private CheckBox ChkShift { get; set; }
-        private CheckBox ChkCtrl { get; set; }
+        private CheckBox ChkControl { get; set; }
         private CheckBox ChkAlt { get; set; }
         private ComboBox ComboBox { get; set; }
 
+        private Button AcceptButton;
 
-        private const char KEY_SEPARATOR = '+';
-        private const String KEY_SHIFT = "Shift";
-        private const String KEY_CONTROL = "Control";
-        private const String KEY_ALT = "Alt";
+        private char KEY_SEPARATOR = char.Parse(CustomKeys.KEY_SEPARATOR);
+        private String KEY_SHIFT = CustomKeys.Shift.DisplayName;
+        private String KEY_CONTROL = CustomKeys.Control.DisplayName;
+        private String KEY_ALT = CustomKeys.Alt.DisplayName;
 
-        public KeySelectionWindow(String keyCombination = null) 
+        public KeySelectionWindow(CustomKey customKey) 
         {
             InitializeComponent();
-            InitializeForm(keyCombination);
+            InitializeForm(customKey);
         }
 
         private void InitializeComponent()
@@ -43,48 +43,48 @@ namespace AudioAppController.View.Model
             ChkShift = new CheckBox();
             ChkShift.Text = KEY_SHIFT;
             ChkShift.Font = new Font(ChkShift.Font.FontFamily, 14);
+            ChkShift.CheckedChanged += onCheckedChanged_Click;
 
-            ChkCtrl = new CheckBox();
-            ChkCtrl.Text = KEY_CONTROL;
-            ChkCtrl.Font = new Font(ChkCtrl.Font.FontFamily, 14);
+            ChkControl = new CheckBox();
+            ChkControl.Text = KEY_CONTROL;
+            ChkControl.Font = new Font(ChkControl.Font.FontFamily, 14);
+            ChkControl.CheckedChanged += onCheckedChanged_Click;
 
             ChkAlt = new CheckBox();
             ChkAlt.Text = KEY_ALT;
             ChkAlt.Font = new Font(ChkAlt.Font.FontFamily, 14);
+            ChkAlt.CheckedChanged += onCheckedChanged_Click;
 
             Label lblInfo = new Label();
             lblInfo.Text = "+";
-            lblInfo.Font  = new Font(ChkCtrl.Font.FontFamily, 14);
+            lblInfo.Font  = new Font(ChkControl.Font.FontFamily, 14);
             lblInfo.AutoSize = true;
 
             ComboBox = new ComboBox();
             ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             ComboBox.Dock = DockStyle.Fill;
             ComboBox.SelectedIndexChanged += ComboBox_SelectedIndexChanged;
-            ComboBox.Font = new Font(ChkCtrl.Font.FontFamily, 14);
-            ComboBox.DropDownHeight = 250; 
+            ComboBox.Font = new Font(ChkControl.Font.FontFamily, 14);
+            ComboBox.DropDownHeight = 250;
+            ComboBox.DropDownWidth = 150;
 
-            Button acceptbutton = new Button();
-            acceptbutton.Text = "Accept";
-            acceptbutton.AutoSize = true;
-            acceptbutton.Click += btnAccept_Click;
-            acceptbutton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            acceptbutton.Font = new Font(ChkCtrl.Font.FontFamily, 14);
+            AcceptButton = new Button();
+            AcceptButton.Text = "Accept";
+            AcceptButton.AutoSize = true;
+            AcceptButton.Click += btnAccept_Click;
+            AcceptButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            AcceptButton.Font = new Font(ChkControl.Font.FontFamily, 14);
+            AcceptButton.Enabled = false;
+            ComboBox.DisplayMember = "DisplayName";
 
-            Array keysArray = Enum.GetValues(typeof(CustomKeys));
-            List<String> keysList = new List<String>();
-            foreach (var item in keysArray)
-            {
-                keysList.Add(item.ToString());
-            }
-            ComboBox.Items.AddRange(keysList.ToArray());
+            ComboBox.Items.AddRange(CustomKeys.GetAllKeys().ToArray());
             ComboBox.SelectedIndex = 0;
 
             tableLayoutPanel.RowStyles.Add(new RowStyle());
             tableLayoutPanel.Controls.Add(ChkShift, 0, 0);
             
             tableLayoutPanel.RowStyles.Add(new RowStyle());
-            tableLayoutPanel.Controls.Add(ChkCtrl, 0, 1);
+            tableLayoutPanel.Controls.Add(ChkControl, 0, 1);
             
             tableLayoutPanel.RowStyles.Add(new RowStyle());
             tableLayoutPanel.Controls.Add(ChkAlt, 0, 2);
@@ -96,7 +96,7 @@ namespace AudioAppController.View.Model
             tableLayoutPanel.Controls.Add(ComboBox, 2, 1);
 
             tableLayoutPanel.RowStyles.Add(new RowStyle());
-            tableLayoutPanel.Controls.Add(acceptbutton, 2, 3);
+            tableLayoutPanel.Controls.Add(AcceptButton, 2, 3);
 
             tableLayoutPanel.Size = new Size(300, 200);
             this.Text = "Change Hotkey";
@@ -104,53 +104,63 @@ namespace AudioAppController.View.Model
             this.StartPosition = FormStartPosition.CenterParent;
         }
 
-        private void InitializeForm(String keyCombination)
+        private void InitializeForm(CustomKey customKey)
         {
-            if(keyCombination == null || keyCombination.Length == 0)
+            if (customKey == null || string.IsNullOrEmpty(customKey.RealName))
             {
                 return;
             }
-            int indexLastSeparator = keyCombination.LastIndexOf(KEY_SEPARATOR);
-            String keySelected = keyCombination.Substring(indexLastSeparator + 1);
 
-            int indexComboBox = ComboBox.Items.IndexOf(keySelected);
+            string[] keys = customKey.RealName.Split(KEY_SEPARATOR);
+            string keySelected = keys[keys.Length - 1];
+
+            int indexComboBox = ComboBox.Items.IndexOf(CustomKeys.GetCustomKeyByRealName(keySelected));
             ComboBox.SelectedIndex = indexComboBox;
 
-            String checkBoxesKeys = keyCombination.Substring(0,indexLastSeparator);
-            String[] checkboxesKeysArray = checkBoxesKeys.Split(KEY_SEPARATOR);
-            for(int i = 0; i < checkboxesKeysArray.Length; i++)
+            foreach (string key in keys.Take(keys.Length - 1))
             {
-                String key = checkboxesKeysArray[i];
                 if (key.Equals(KEY_SHIFT, StringComparison.OrdinalIgnoreCase))
                 {
                     ChkShift.Checked = true;
                 }
                 else if (key.Equals(KEY_CONTROL, StringComparison.OrdinalIgnoreCase))
                 {
-                    ChkCtrl.Checked = true;
+                    ChkControl.Checked = true;
                 }
                 else if (key.Equals(KEY_ALT, StringComparison.OrdinalIgnoreCase))
                 {
                     ChkAlt.Checked = true;
                 }
             }
+
+            EnableAcceptButton();
         }
 
         private void btnAccept_Click(object sender, EventArgs e)
         {
-            buildCombination();
+            buildModifiers();
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
 
-        private void buildCombination()
+        private void onCheckedChanged_Click(object sender, EventArgs e)
+        {
+            EnableAcceptButton();
+        }
+
+        private void EnableAcceptButton()
+        {
+            this.AcceptButton.Enabled = ChkShift.Checked || ChkControl.Checked || ChkAlt.Checked;
+        }
+
+        private void buildModifiers()
         {
             String key = "";
             if (ChkShift.Checked)
             {
                 key += KEY_SHIFT + KEY_SEPARATOR;
             }
-            if (ChkCtrl.Checked)
+            if (ChkControl.Checked)
             {
                 key += KEY_CONTROL + KEY_SEPARATOR;
             }
@@ -164,7 +174,9 @@ namespace AudioAppController.View.Model
         private void ComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
-            Key = comboBox.SelectedItem.ToString();
+            if (comboBox.SelectedIndex == -1) return;
+
+            Key = (comboBox.SelectedItem as CustomKey).RealName;
         }
     }
 }

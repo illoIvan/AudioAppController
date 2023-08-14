@@ -1,12 +1,8 @@
 ﻿using AudioAppController.Model;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AudioAppController.View.Component
@@ -169,7 +165,7 @@ namespace AudioAppController.View.Component
             AudioTrackPanel audioPanelToRemove = GetAudioPanel(audioProcess);
             if (audioPanelToRemove == null) return;
 
-            audioPanelToRemove.AudioProcess.KeyCombination = null;
+            audioPanelToRemove.AudioProcess.CustomKey = null;
             audioPanelToRemove.IsShowing = false;
             this.trackPanels.Remove(audioPanelToRemove);
             this.Controls.Remove(audioPanelToRemove);
@@ -219,14 +215,14 @@ namespace AudioAppController.View.Component
             }
         }
 
-        public List<AudioTrackPanel> GetByCombination(String combination)
+        public List<AudioTrackPanel> GetByRealKey(String inputKey)
         {
-            if (combination == null) return new List<AudioTrackPanel> ();
+            if (string.IsNullOrEmpty(inputKey)) return new List<AudioTrackPanel> ();
 
             List<AudioTrackPanel> audioTrackPanels = trackPanels
                 .FindAll(atp => atp.AudioProcess != null 
-                    && atp.AudioProcess.KeyCombination != null 
-                    && atp.AudioProcess.KeyCombination.Equals(combination));
+                    && atp.AudioProcess.CustomKey != null 
+                    && atp.AudioProcess.CustomKey.RealName.Equals(inputKey));
 
             return audioTrackPanels;
         }
