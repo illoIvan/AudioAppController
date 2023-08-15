@@ -215,7 +215,7 @@ namespace AudioAppController.View.Component
             }
         }
 
-        public List<AudioTrackPanel> GetByRealKey(String inputKey)
+        public List<AudioTrackPanel> GetByRealNameKey(String inputKey)
         {
             if (string.IsNullOrEmpty(inputKey)) return new List<AudioTrackPanel> ();
 

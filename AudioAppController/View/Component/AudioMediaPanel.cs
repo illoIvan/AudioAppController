@@ -11,11 +11,11 @@ namespace AudioAppController.View.Component
 
     public partial class AudioMediaPanel : TableLayoutPanel
     {
-        private KeyBoardSimulator keyboardSimulator;
+        private CustomKeyBoardSimulator keyboardSimulator;
         private List<AudioProcess> mediaProcesses;
         public AudioMediaPanel(List<AudioProcess> mediaProcesses)
         {
-            this.keyboardSimulator = new KeyBoardSimulator();
+            this.keyboardSimulator = new CustomKeyBoardSimulator();
             this.mediaProcesses = mediaProcesses;
             InitializeComponent();
         }

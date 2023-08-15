@@ -7,11 +7,11 @@ namespace AudioAppController.Model
     public class AudioMediaManager
     {
         public List<AudioProcess> mediaProcesses { get; private set; }
-        private KeyBoardSimulator keyboardSimulator;
+        private CustomKeyBoardSimulator keyboardSimulator;
         public AudioMediaManager() 
         {
             this.mediaProcesses = new List<AudioProcess>();
-            this.keyboardSimulator = new KeyBoardSimulator();
+            this.keyboardSimulator = new CustomKeyBoardSimulator();
             LoadMediaProcesses();
         } 
 

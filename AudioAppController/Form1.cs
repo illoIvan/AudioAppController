@@ -114,14 +114,14 @@ namespace AudioAppController
             String key = keys[0];
             String modifiers = string.Join("+", keys.Skip(1));
 
-            //Debug.WriteLine("keys: "+string.Join(", ", keys));  
+            //System.Diagnostics.Debug.WriteLine("keys: " + string.Join(", ", keys));
             if (keys.Length == 0) return;
 
             String realCombination = modifiers + "+" + key;
 
             audioProcessesManager.ExecuteRealCombination(realCombination);
             audioMediaManager.ExecuteRealCombination(realCombination);
-            audioProcessesPanel.UpdateViewPanelList(audioProcessesPanel.GetByRealKey(realCombination));
+            audioProcessesPanel.UpdateViewPanelList(audioProcessesPanel.GetByRealNameKey(realCombination));
             this.OnAllAudioTrackPanelsMuted();
         }
     }

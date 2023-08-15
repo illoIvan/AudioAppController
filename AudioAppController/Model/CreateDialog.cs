@@ -1,5 +1,6 @@
 ﻿using AudioAppController.View.Model;
 using System;
+using System.Text;
 using System.Windows.Forms;
 
 namespace AudioAppController.Model
@@ -9,22 +10,35 @@ namespace AudioAppController.Model
 
         public static CustomKey OpenKeySelectionWindow(CustomKey customKey)
         {
-            KeySelectionWindow keySelectionWindow = new KeySelectionWindow(customKey);
-            DialogResult result = keySelectionWindow.ShowDialog();
-
-            if (result != DialogResult.OK)
+            using (KeySelectionWindow keySelectionWindow = new KeySelectionWindow(customKey))
             {
-                return null;
+                if (keySelectionWindow.ShowDialog() != DialogResult.OK)
+                {
+                    return null;
+                }
+
+                StringBuilder finalKey = new StringBuilder();
+
+                if (keySelectionWindow.isSpecialKeys 
+                    && !string.IsNullOrEmpty(keySelectionWindow.Key))
+                {
+                    finalKey.Append(keySelectionWindow.Key);
+                }
+
+                if (keySelectionWindow.isModifiers 
+                    && !string.IsNullOrEmpty(keySelectionWindow.Modifiers))
+                {
+                    finalKey.Append(keySelectionWindow.Modifiers + keySelectionWindow.Key);
+                }
+
+                if (finalKey.Length == 0)
+                {
+                    return null;
+                }
+
+                return CustomKeys.ConvertToCustomKey(finalKey.ToString());
             }
-
-            String modifiers = keySelectionWindow.Modifiers;
-            String key = keySelectionWindow.Key;
-
-            if (string.IsNullOrEmpty(modifiers)) return null;
-
-            CustomKey keyDialog = CustomKeys.ConvertToCustomKey(modifiers + key);
-
-            return keyDialog;
         }
     }
+    
 }

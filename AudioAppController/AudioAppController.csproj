@@ -68,7 +68,7 @@
     <Compile Include="Model\CustomKey.cs" />
     <Compile Include="Model\CustomKeys.cs" />
     <Compile Include="Model\KeyBoardHook.cs" />
-    <Compile Include="Model\KeyBoardSimulator.cs" />
+    <Compile Include="Model\CustomKeyBoardSimulator.cs" />
     <Compile Include="View\Component\AudioProcessesPanel.cs">
       <SubType>Component</SubType>
     </Compile>

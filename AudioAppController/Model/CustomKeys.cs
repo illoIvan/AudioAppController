@@ -63,6 +63,7 @@ namespace AudioAppController.Model
         public static CustomKey Oemcomma { get; } = new CustomKey("Oemcomma", "Comma(,)");
         public static CustomKey OemMinus { get; } = new CustomKey("OemMinus", "Minux(-)");
         public static CustomKey OemPeriod { get; } = new CustomKey("OemPeriod", "Period(.)");
+        public static CustomKey LessThan { get; } = new CustomKey("OemBackslash", "Less Than (<)");
         public static CustomKey NumPad0 { get; } = new CustomKey("NumPad0", "NumPad0");
         public static CustomKey NumPad1 { get; } = new CustomKey("NumPad1", "NumPad1");
         public static CustomKey NumPad2 { get; } = new CustomKey("NumPad2", "NumPad2");
@@ -88,6 +89,8 @@ namespace AudioAppController.Model
         public static CustomKey F10 { get; } = new CustomKey("F10", "F10");
         public static CustomKey F11 { get; } = new CustomKey("F11", "F11");
         public static CustomKey F12 { get; } = new CustomKey("F12", "F12");
+
+        //virtual keys
         public static CustomKey F13 { get; } = new CustomKey("F13", "F13");
         public static CustomKey F14 { get; } = new CustomKey("F14", "F14");
         public static CustomKey F15 { get; } = new CustomKey("F15", "F15");
@@ -101,6 +104,7 @@ namespace AudioAppController.Model
         public static CustomKey F23 { get; } = new CustomKey("F23", "F23");
         public static CustomKey F24 { get; } = new CustomKey("F24", "F24");
 
+        //modifiers
         public static CustomKey Alt { get; } = new CustomKey("Alt", "Alt");
         public static CustomKey Control { get; } = new CustomKey("Control", "Control");
         public static CustomKey Shift { get; } = new CustomKey("Shift", "Shift");
@@ -115,25 +119,33 @@ namespace AudioAppController.Model
 
                 Left, Up, Right, Down,
 
+                LessThan,
+
                 D0, D1, D2, D3, D4, D5, D6, D7, D8, D9,
 
                 A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
                 Back,Enter,Space,
 
                 Oemplus, Oemcomma, OemMinus, OemPeriod,
-            
+
                 Multiply, Subtract,Divide,
 
                 NumPad0, NumPad1, NumPad2, NumPad3, NumPad4,
                 NumPad5, NumPad6, NumPad7, NumPad8, NumPad9, 
 
-                F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12,
-                F13, F14, F15, F16, F17, F18, F19, F20, F21, F22, F23, F24
+                F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12
             };
         }
         public static List<CustomKey> GetAllModifiers()
         {
             return new List<CustomKey> { Shift, Control, Alt };
+        }
+
+        public static List<CustomKey> GetAllSpecialKeys()
+        {
+            return new List<CustomKey> { 
+                F13, F14, F15, F16, F17, F18, F19, F20, F21, F22, F23, F24 
+            };
         }
 
         public static List<String> GetDisplayNameKeys()
@@ -152,10 +164,14 @@ namespace AudioAppController.Model
             {
                 return GetAllModifiers().FirstOrDefault(k => k.RealName.Equals(key));
             }
-            else
+
+            if (IsSpecialKey(key))
             {
-                return GetAllKeys().FirstOrDefault(k => k.RealName.Equals(key));
+                return GetAllSpecialKeys().FirstOrDefault(k => k.RealName.Equals(key));
             }
+
+            return GetAllKeys().FirstOrDefault(k => k.RealName.Equals(key));
+            
         }
         public static bool IsModifier(string input)
         {
@@ -163,6 +179,14 @@ namespace AudioAppController.Model
 
             return keys.Exists(k => k.RealName.Equals(input));
         }
+
+        public static bool IsSpecialKey(string input)
+        {
+            List<CustomKey> keys = GetAllSpecialKeys();
+
+            return keys.Exists(k => k.RealName.Equals(input));
+        }
+
         public static CustomKey ConvertToCustomKey(string keyInput)
         {
             if (string.IsNullOrEmpty(keyInput))
@@ -189,7 +213,7 @@ namespace AudioAppController.Model
                 }
             }
 
-            if (keys.Count == 0 || modifiers.Count == 0)
+            if (keys.Count == 0 && modifiers.Count == 0)
             {
                 return null;
             }

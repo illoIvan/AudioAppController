@@ -2,10 +2,10 @@
 
 namespace AudioAppController.Model
 {
-    public class KeyBoardSimulator
+    public class CustomKeyBoardSimulator
     {
         private InputSimulator Simulator;
-        public KeyBoardSimulator() 
+        public CustomKeyBoardSimulator() 
         {
             Simulator = new InputSimulator();
         }
