@@ -2,7 +2,7 @@
 
 ## Description
 
-La **AudioControlApp** is an application developed in C# with the use of the .NET framework that allows you to have full control over the audio of your applications. With this tool, you will be able to manage the volume and audio playback through customizable key combinations, even from other running programs and games.
+The **AudioControlApp** is an application developed in C# with the use of the .NET framework that allows you to have full control over the audio of your applications. With this tool, you will be able to manage the volume and audio playback through customizable key combinations, even from other running programs and games.
 
 ## 🏭 Releases
 Check [here](https://github.com/illoIvan/AudioAppController/releases) latest releases to download
