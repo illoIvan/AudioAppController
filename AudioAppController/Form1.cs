@@ -119,6 +119,10 @@ namespace AudioAppController
 
             String realCombination = modifiers + "+" + key;
 
+            String realCombination = !string.IsNullOrEmpty(modifiers)
+                ? modifiers + "+" + key
+                : key;
+            
             audioProcessesManager.ExecuteRealCombination(realCombination);
             audioMediaManager.ExecuteRealCombination(realCombination);
             audioProcessesPanel.UpdateViewPanelList(audioProcessesPanel.GetByRealNameKey(realCombination));
