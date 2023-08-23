@@ -117,8 +117,6 @@ namespace AudioAppController
             //System.Diagnostics.Debug.WriteLine("keys: " + string.Join(", ", keys));
             if (keys.Length == 0) return;
 
-            String realCombination = modifiers + "+" + key;
-
             String realCombination = !string.IsNullOrEmpty(modifiers)
                 ? modifiers + "+" + key
                 : key;
